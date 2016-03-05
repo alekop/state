@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "out": "state.js",
+        "target": "es6",
+        "sourceMap": true,
+        "declaration": true
+    },
+    "files": [
+    	"src/State.ts",
+    	"src/Transition.ts"
+    ],
+    "exclude": [
+    	"node_modules"
+    ]
+}
