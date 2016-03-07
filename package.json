@@ -9,9 +9,10 @@
   "devDependencies": {
     "del": "^2.2.0",
     "gulp": "*",
+    "gulp-jasmine": "^2.3.0",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-tslint": "^3.5.0",
-    "gulp-typescript": "*"
+    "gulp-typescript": "*",
   },
   "main": "state.js",
   "directories": {

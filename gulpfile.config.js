@@ -1,11 +1,13 @@
 'use strict';
 var GulpConfig = (function () {
     function gulpConfig() {
-        this.source = './src';
+    	var tsGlob = '/**/*.ts',
+    		jsGlob = '/**/*.js';
 
+        this.mainSrc = './src' + tsGlob;
+        this.testSrc = './test' + tsGlob;
         this.tsOutputPath = './dist';
-        this.allJavaScript = [this.source + '/**/*.js'];
-        this.allTypeScript = this.source + '/**/*.ts';
+        this.testOutputFile = this.tsOutputPath;
     }
     return gulpConfig;
 })();

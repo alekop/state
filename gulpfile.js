@@ -5,52 +5,65 @@ var gulp = require('gulp'),
 //    inject = require('gulp-inject'),
     tsc = require('gulp-typescript'),
     tslint = require('gulp-tslint'),
+    jasmine = require('gulp-jasmine'),
     sourcemaps = require('gulp-sourcemaps'),
     del = require('del'),
     Config = require('./gulpfile.config'),
-    tsProject = tsc.createProject('tsconfig.json');
+    tsProject = tsc.createProject('tsconfig.json'),
+    tsProjectTest = tsc.createProject('tsconfig-test.json');
 //    browserSync = require('browser-sync'),
 //    superstatic = require( 'superstatic' );
 
 var config = new Config();
 
-/**
- * Lint all custom TypeScript files.
- */
 gulp.task('ts-lint', function () {
-    return gulp.src(config.allTypeScript).pipe(tslint()).pipe(tslint.report('prose'));
+    return gulp.src(config.mainSrc)
+      .pipe(tslint())
+      .pipe(tslint.report('prose'));
 });
 
-/**
- * Compile TypeScript and include references to library and app .d.ts files.
- */
-gulp.task('compile-ts', function () {
+gulp.task('compile-main', function () {
     var tsResult = tsProject.src()
-//                       .pipe(sourcemaps.init())
-                       .pipe(tsc(tsProject));
+        .pipe(sourcemaps.init())
+        .pipe(tsc(tsProject));
 
-//        tsResult.dts.pipe(gulp.dest(config.tsOutputPath));
+        tsResult.dts.pipe(gulp.dest(config.tsOutputPath));
         return tsResult.js
-  //                      .pipe(sourcemaps.write('.'))
-                        .pipe(gulp.dest(config.tsOutputPath));
+            .pipe(sourcemaps.write('.'))
+            .pipe(gulp.dest(config.tsOutputPath));
 });
+
+
+// ===== TESTS =====
+
+gulp.task('compile-tests', function() {
+    return tsProjectTest.src()
+        .pipe(tsc(tsProjectTest))
+        .pipe(gulp.dest(config.testOutputFile));
+});
+
+gulp.task('run-tests', ['compile-tests'], function() {
+  gulp.src(config.testSrc)
+    .pipe(jasmine());
+});
+
 
 /**
  * Remove all generated JavaScript files from TypeScript compilation.
  */
-gulp.task('clean-ts', function (cb) {
-  var typeScriptGenFiles = [
-                              config.tsOutputPath +'/**/*.js',    // path to all JS files auto gen'd by editor
-                              config.tsOutputPath +'/**/*.js.map', // path to all sourcemap files auto gen'd by editor
-                              '!' + config.tsOutputPath + '/lib'
-                           ];
+gulp.task('clean', function (cb) {
+    var typeScriptGenFiles = [
+        config.tsOutputPath +'/**/*.d.ts',
+        config.tsOutputPath +'/**/*.js',
+        config.tsOutputPath +'/**/*.js.map'
+    ];
 
-  // delete the files
-  del(typeScriptGenFiles, cb);
+    // delete the files
+    del(typeScriptGenFiles, cb);
 });
 
 gulp.task('watch', function() {
-    gulp.watch([config.allTypeScript], ['ts-lint', 'compile-ts']);
+    gulp.watch([config.mainSrc, config.mainSrc], ['ts-lint', 'compile-main', 'run-tests']);
 });
 
-gulp.task('default', [/*'ts-lint', */'compile-ts']);
+gulp.task('default', ['ts-lint', 'compile-main', 'run-tests']);

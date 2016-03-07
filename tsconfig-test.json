@@ -1,0 +1,14 @@
+{
+	"compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "out": "state-test.js",
+        "target": "es5"
+    },
+    "files": [
+    	"test/state.ts"
+    ],
+    "exclude": [
+    	"node_modules"
+    ]
+}
